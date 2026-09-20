@@ -22,7 +22,7 @@
                             200: '#99d3ad',
                             300: '#66bd85',
                             400: '#33a75c',
-                            500: '#006C35', // اللون الأخضر السعودي الأساسي
+                            500: '#006C35',
                             600: '#005b2d',
                             700: '#004824',
                             800: '#00361b',
@@ -65,6 +65,23 @@
             }
         }
 
+        /* Smooth View Transitions */
+        .view-section {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .view-section.fade-out {
+            opacity: 0;
+            transform: translateY(15px);
+            pointer-events: none;
+        }
+
+        .view-section.hidden {
+            display: none;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -81,10 +98,6 @@
 
         .saudi-pattern {
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .gold-border {
-            border: 2px solid rgba(212, 175, 55, 0.4);
         }
 
         .glass-card {
@@ -130,21 +143,19 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getDatabase, ref, push, onValue, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
         
-        // Expose Firebase tools globally for our vanilla app
         window.FB = { initializeApp, getDatabase, ref, push, onValue, set, serverTimestamp };
     </script>
 </head>
 <body class="saudi-pattern flex flex-col min-h-screen justify-between">
 
     <!-- Top Header Bar with Logos -->
-    <header class="w-full py-4 px-6 md:px-12 bg-saudi-900/80 border-b border-gold/30 backdrop-blur-md">
+    <header class="w-full py-3 px-6 md:px-12 bg-saudi-900/80 border-b border-gold/30 backdrop-blur-md">
         <div class="ipad-container flex flex-row items-center justify-between">
             <!-- Ministry of Education Logo & Title -->
             <div class="flex items-center gap-3">
-                <div class="bg-white/95 p-1.5 rounded-xl shadow-md border border-gold/30 flex items-center justify-center w-14 h-14">
-                    <!-- شعار وزارة التعليم -->
-                    <img src="https://upload.wikimedia.org/wikipedia5/commons/thumb/c/cf/Logo_of_the_Ministry_of_Education_%28Saudi_Arabia%29.svg/512px-Logo_of_the_Ministry_of_Education_%28Saudi_Arabia%29.svg.png" 
-                         onerror="this.src='https://i.ibb.co/3s6QJv2/education-logo.png'" 
+                <div class="bg-white/95 p-1 rounded-xl shadow-md border border-gold/30 flex items-center justify-center w-14 h-14">
+                    <img src="https://i.ibb.co/6yC1H5z/education-logo.png" 
+                         onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Logo_of_the_Ministry_of_Education_%28Saudi_Arabia%29.svg/512px-Logo_of_the_Ministry_of_Education_%28Saudi_Arabia%29.svg.png'" 
                          alt="شعار وزارة التعليم" class="w-11 h-11 object-contain">
                 </div>
                 <div class="hidden sm:block text-right">
@@ -155,17 +166,18 @@
 
             <!-- Central Title -->
             <div class="text-center px-2">
-                <h1 class="text-lg md:text-2xl font-black text-white tracking-wide drop-shadow-md">
+                <h1 class="text-base md:text-xl font-black text-white tracking-wide drop-shadow-md">
                     اليوم الوطني السعودي لمدرسة الثانويه الثلاثون
                 </h1>
-                <p class="text-xs md:text-sm text-gold font-medium mt-0.5">ركن طالبات الثانوية الثلاثون الموهوبات 🇸🇦</p>
+                <p class="text-xs text-gold font-medium mt-0.5">ركن طالبات الثانوية الثلاثون الموهوبات 🇸🇦</p>
+                <p class="text-[11px] text-saudi-100 font-semibold mt-0.5">عمل الطالبه الموهوبه: حلا زكري</p>
             </div>
 
             <!-- Vision 2030 Logo -->
             <div class="flex items-center justify-end">
-                <div class="bg-white/95 p-1.5 rounded-xl shadow-md border border-gold/30 flex items-center justify-center w-14 h-14">
-                    <!-- شعار رؤية 2030 -->
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Saudi_Vision_2030_logo.svg/512px-Saudi_Vision_2030_logo.svg.png" 
+                <div class="bg-white/95 p-1 rounded-xl shadow-md border border-gold/30 flex items-center justify-center w-14 h-14">
+                    <img src="https://i.ibb.co/3s6QJv2/vision-2030-logo.png" 
+                         onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Saudi_Vision_2030_logo.svg/512px-Saudi_Vision_2030_logo.svg.png'" 
                          alt="شعار رؤية السعودية 2030" class="w-11 h-11 object-contain">
                 </div>
             </div>
@@ -179,7 +191,6 @@
             <!-- VIEW 1: HOME PAGE -->
             <section id="home-view" class="view-section text-center py-6">
                 <div class="glass-card rounded-3xl p-8 md:p-12 max-w-4xl mx-auto border-2 border-gold/40 relative overflow-hidden">
-                    <!-- Decorative corner ornaments -->
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-gold/10 rounded-full blur-2xl pointer-events-none"></div>
                     <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-saudi-400/20 rounded-full blur-2xl pointer-events-none"></div>
 
@@ -194,9 +205,9 @@
                         اختبري معلوماتك الوطنية، واكتبي أجمل عبارات الوفاء والفخر لوطننا الغالي في ركن الموهوبات.
                     </p>
 
-                    <!-- Main Action Buttons (Horizontal layout optimized for iPad landscape) -->
+                    <!-- Main Action Buttons -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                        <button onclick="app.startQuiz()" class="group relative bg-gradient-to-r from-saudi-500 to-saudi-700 hover:from-saudi-400 hover:to-saudi-600 text-white font-bold p-6 rounded-2xl shadow-xl border-2 border-gold/50 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3">
+                        <button onclick="app.startQuiz()" class="group relative bg-gradient-to-r from-saudi-500 to-saudi-700 hover:from-saudi-400 hover:to-saudi-600 text-white font-bold p-6 rounded-2xl shadow-xl border-2 border-gold/50 transition-all duration-300 transform active:scale-95 hover:-translate-y-1 flex flex-col items-center justify-center gap-3">
                             <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
                                 🧠
                             </div>
@@ -206,7 +217,7 @@
                             </div>
                         </button>
 
-                        <button onclick="app.showMessagesView()" class="group relative bg-gradient-to-r from-saudi-800 to-saudi-900 hover:from-saudi-700 hover:to-saudi-800 text-white font-bold p-6 rounded-2xl shadow-xl border-2 border-gold/50 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3">
+                        <button onclick="app.showMessagesView()" class="group relative bg-gradient-to-r from-saudi-800 to-saudi-900 hover:from-saudi-700 hover:to-saudi-800 text-white font-bold p-6 rounded-2xl shadow-xl border-2 border-gold/50 transition-all duration-300 transform active:scale-95 hover:-translate-y-1 flex flex-col items-center justify-center gap-3">
                             <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
                                 💚
                             </div>
@@ -216,32 +227,22 @@
                             </div>
                         </button>
                     </div>
-
-                    <div class="mt-12 text-xs text-saudi-200/80 font-medium flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-tablet-screen-button text-gold"></i>
-                        <span>مخصص للاستخدام المباشر على شاشة الركن (iPad)</span>
-                    </div>
                 </div>
             </section>
 
             <!-- VIEW 2: QUIZ PAGE -->
             <section id="quiz-view" class="view-section hidden max-w-3xl mx-auto">
                 <div class="glass-card rounded-3xl p-6 md:p-10 border-2 border-gold/40 relative">
-                    <!-- Progress Bar & Header -->
                     <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-                        <button onclick="app.returnToHome()" class="text-saudi-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                        <button onclick="app.returnToHome()" class="text-saudi-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-bold transition active:scale-95 flex items-center gap-2">
                             <i class="fa-solid fa-arrow-right"></i> الرئيسية
                         </button>
                         <div class="text-center">
                             <span id="quiz-progress-text" class="text-gold font-bold text-sm bg-gold/10 px-4 py-1.5 rounded-full border border-gold/30">السؤال 1 من 5</span>
                         </div>
-                        <div class="w-20"></div> <!-- Spacer for balance -->
+                        <div class="w-20"></div>
                     </div>
-
-                    <!-- Question Container -->
-                    <div id="question-container" class="mb-8">
-                        <!-- Populated via JavaScript -->
-                    </div>
+                    <div id="question-container" class="mb-8"></div>
                 </div>
             </section>
 
@@ -261,7 +262,7 @@
                     </div>
 
                     <div>
-                        <button onclick="app.goToWriteMessage()" class="w-full bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-saudi-950 font-black text-xl py-4 px-8 rounded-2xl shadow-xl transition transform hover:scale-105 flex items-center justify-center gap-3">
+                        <button onclick="app.goToWriteMessage()" class="w-full bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-saudi-950 font-black text-xl py-4 px-8 rounded-2xl shadow-xl transition transform active:scale-95 hover:scale-105 flex items-center justify-center gap-3">
                             <span>💚 اكتبي كلمتك للوطن</span>
                         </button>
                     </div>
@@ -280,10 +281,10 @@
                     <p class="text-base text-saudi-100 mb-8">جميل جداً تفاعلكِ مع تحدي الوطن، ننتظر منكِ محاولة أخرى أو يمكنك زيارة ركن الكلمات!</p>
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <button onclick="app.startQuiz()" class="bg-saudi-500 hover:bg-saudi-400 text-white font-bold py-3.5 px-6 rounded-xl transition border border-gold/30">
+                        <button onclick="app.startQuiz()" class="bg-saudi-500 hover:bg-saudi-400 text-white font-bold py-3.5 px-6 rounded-xl transition active:scale-95 border border-gold/30">
                             🔄 إعادة المحاولة
                         </button>
-                        <button onclick="app.returnToHome()" class="bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 px-6 rounded-xl transition border border-white/20">
+                        <button onclick="app.returnToHome()" class="bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 px-6 rounded-xl transition active:scale-95 border border-white/20">
                             العودة للرئيسية
                         </button>
                     </div>
@@ -293,9 +294,8 @@
             <!-- VIEW 5: STUDENT MESSAGES & WRITING WALL -->
             <section id="messages-view" class="view-section hidden max-w-6xl mx-auto">
                 <div class="glass-card rounded-3xl p-6 md:p-10 border-2 border-gold/40">
-                    <!-- Header & Navigation -->
                     <div class="flex flex-col md:flex-row items-center justify-between pb-6 mb-8 border-b border-white/10 gap-4">
-                        <button onclick="app.returnToHome()" class="text-saudi-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                        <button onclick="app.returnToHome()" class="text-saudi-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-bold transition active:scale-95 flex items-center gap-2">
                             <i class="fa-solid fa-arrow-right"></i> الرئيسية
                         </button>
                         <div class="text-center">
@@ -307,7 +307,7 @@
                         <div class="w-24 hidden md:block"></div>
                     </div>
 
-                    <!-- Writing Box (Only visible if user passed 5/5) -->
+                    <!-- Writing Box -->
                     <div id="write-box-container" class="hidden mb-10 bg-saudi-900/90 border-2 border-gold rounded-2xl p-6 shadow-2xl">
                         <div class="flex items-center justify-between mb-3">
                             <h4 class="text-gold font-bold text-lg flex items-center gap-2">
@@ -317,7 +317,7 @@
                         </div>
                         <textarea id="message-input" maxlength="180" rows="3" placeholder="اكتبي كلمتكِ هنا بكل حب واعتزاز لوطننا العظيم..." class="w-full bg-saudi-950/80 border border-gold/40 rounded-xl p-4 text-white placeholder-saudi-300 focus:outline-none focus:border-gold resize-none text-base font-medium"></textarea>
                         <div class="flex justify-end mt-3">
-                            <button onclick="app.submitMessage()" class="bg-gradient-to-r from-saudi-500 to-saudi-600 hover:from-saudi-400 hover:to-saudi-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg border border-gold/50 transition flex items-center gap-2 text-base">
+                            <button onclick="app.submitMessage()" class="bg-gradient-to-r from-saudi-500 to-saudi-600 hover:from-saudi-400 hover:to-saudi-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg border border-gold/50 transition active:scale-95 flex items-center gap-2 text-base">
                                 <span>إرسال 💚</span>
                             </button>
                         </div>
@@ -336,10 +336,7 @@
                             <p class="text-sm text-saudi-200">كوني أول طالبة تبادر وتكتب كلمتها للوطن عبر اجتياز الاختبار!</p>
                         </div>
 
-                        <!-- Bubbles container -->
-                        <div id="bubbles-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
-                            <!-- Populated via Firebase Realtime listener -->
-                        </div>
+                        <div id="bubbles-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10"></div>
                     </div>
                 </div>
             </section>
@@ -354,11 +351,10 @@
 
     <!-- Application Logic Script -->
     <script>
-        // Database of Questions (Comprehensive Bank - No date questions except National Day)
         const questionBank = [
             {
                 q: "ما هو اللون المميز للعلم السعودي وماذا يرمز؟",
-                options: ["الأخضر ويررمز للنماء والرخاء والسلام", "الأزرق ويرمز للبحر الممتد", "الأحمر ويررمز للتاريخ العريق"],
+                options: ["الأخضر ويررمز للنماء والرخاء والسلام", "الأزرق ويررمز للبحر الممتد", "الأحمر ويررمز للتاريخ العريق"],
                 answer: 0
             },
             {
@@ -422,7 +418,7 @@
                 answer: 0
             },
             {
-                q: "ما هي حة القهوة السعودية الرسمية التي تم إعلان العام المخصص لها لتعزيز التراث والثقافة؟",
+                q: "ما هي حملة القهوة السعودية الرسمية التي تم إعلان العام المخصص لها لتعزيز التراث والثقافة؟",
                 options: ["عام القهوة السعودية", "عام التراث الوطني", "عام الشعر العربي"],
                 answer: 0
             },
@@ -466,7 +462,6 @@
                 this.score = 0;
                 this.userCanWrite = false;
                 
-                // Firebase setup
                 this.db = null;
                 this.initFirebase();
                 this.initCharCounter();
@@ -474,7 +469,6 @@
 
             async initFirebase() {
                 try {
-                    // Public Demo Firebase configuration for reliable real-time sync across iPad/displays
                     const firebaseConfig = {
                         databaseURL: "https://national-day-30th-default-rtdb.firebaseio.com/"
                     };
@@ -483,17 +477,29 @@
                     this.listenToMessages();
                 } catch (e) {
                     console.log("Firebase fallback initialization active", e);
-                    // Fallback to local array storage if offline/network restriction
                     this.messages = JSON.parse(localStorage.getItem('saudi_national_messages_30th') || '[]');
                     this.renderMessagesLocally();
                 }
             }
 
             switchView(viewId) {
-                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-                document.getElementById(viewId).classList.remove('hidden');
-                this.currentView = viewId;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const currentEl = document.getElementById(this.currentView);
+                if (currentEl) {
+                    currentEl.classList.add('fade-out');
+                    setTimeout(() => {
+                        currentEl.classList.add('hidden');
+                        currentEl.classList.remove('fade-out');
+                        
+                        const nextEl = document.getElementById(viewId);
+                        nextEl.classList.remove('hidden');
+                        this.currentView = viewId;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 300);
+                } else {
+                    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                    document.getElementById(viewId).classList.remove('hidden');
+                    this.currentView = viewId;
+                }
             }
 
             returnToHome() {
@@ -513,7 +519,6 @@
             startQuiz() {
                 this.score = 0;
                 this.currentQuestionIndex = 0;
-                // Shuffle and pick 5 random questions
                 const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
                 this.currentQuizQuestions = shuffled.slice(0, 5);
                 this.switchView('quiz-view');
@@ -541,7 +546,7 @@
 
                 qData.options.forEach((opt, idx) => {
                     html += `
-                        <button onclick="app.answerQuestion(${idx})" class="w-full text-right bg-saudi-900/80 hover:bg-saudi-700/80 border border-gold/30 hover:border-gold p-4 rounded-xl text-white font-medium text-lg transition flex items-center justify-between group">
+                        <button onclick="app.answerQuestion(${idx})" class="w-full text-right bg-saudi-900/80 hover:bg-saudi-700/80 border border-gold/30 hover:border-gold p-4 rounded-xl text-white font-medium text-lg transition active:scale-95 flex items-center justify-between group">
                             <span>${opt}</span>
                             <span class="w-8 h-8 rounded-full bg-white/10 group-hover:bg-gold group-hover:text-saudi-950 flex items-center justify-center text-sm font-bold transition text-gold">
                                 ${['أ', 'ب', 'ج'][idx]}
@@ -616,7 +621,6 @@
                         const messagesRef = window.FB.ref(this.db, 'national_messages_30th');
                         await window.FB.push(messagesRef, messageObj);
                     } else {
-                        // Fallback local storage
                         this.messages.unshift(messageObj);
                         localStorage.setItem('saudi_national_messages_30th', JSON.stringify(this.messages));
                         this.renderMessagesLocally();
@@ -624,7 +628,7 @@
 
                     input.value = '';
                     document.getElementById('char-count').innerText = '0 / 180 حرف';
-                    this.userCanWrite = false; // Lock writing until next 5/5
+                    this.userCanWrite = false;
                     document.getElementById('write-box-container').classList.add('hidden');
                     alert('تم إرسال رسالتكِ بنجاح وفوري في ركن الكلمات 💚🇸🇦');
                 } catch (error) {
@@ -655,7 +659,6 @@
 
                     messagesArray.forEach((msg, idx) => {
                         const bubble = document.createElement('div');
-                        // Random rotation angles or offsets for organic chat bubble feeling
                         const rotations = ['rotate-1', '-rotate-1', 'rotate-0', 'rotate-2', '-rotate-2'];
                         const rotClass = rotations[idx % rotations.length];
                         
@@ -718,7 +721,6 @@
             return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
 
-        // Initialize application instance
         const app = new NationalDayApp();
     </script>
 </body>
