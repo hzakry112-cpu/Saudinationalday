@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تحدي الوطن | الثانوية الثلاثون</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        saudi: {
+                            50: '#e6f4ed',
+                            100: '#cce9d6',
+                            200: '#99d3ad',
+                            300: '#66bd85',
+                            400: '#33a75c',
+                            500: '#006C35', // اللون الأخضر السعودي الأساسي
+                            600: '#005b2d',
+                            700: '#004824',
+                            800: '#00361b',
+                            900: '#002412',
+                        },
+                        gold: {
+                            DEFAULT: '#D4AF37',
+                            light: '#F4E8C1',
+                            dark: '#997A15'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            background-color: #005b2d;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 108, 53, 0.9) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(0, 54, 27, 0.9) 0%, transparent 40%),
+                linear-gradient(135deg, #004824 0%, #006C35 50%, #00361b 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* iPad Landscape Optimization */
+        @media screen and (min-width: 768px) {
+            .ipad-container {
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 54, 27, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 4px;
+        }
+
+        .saudi-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .gold-border {
+            border: 2px solid rgba(212, 175, 55, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(0, 72, 36, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-bubble {
+            background: rgba(255, 255, 255, 0.95);
+            color: #00361b;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .glass-bubble:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+        .floating {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.7); }
+        }
+        .glow-gold {
+            animation: pulseGlow 3s infinite;
+        }
+    </style>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+        
+        // Expose Firebase tools globally for our vanilla app
+        window.FB = { initializeApp, getDatabase, ref, push, onValue, set, serverTimestamp };
+    </script>
+</head>
+<body class="saudi-pattern flex flex-col min-h-screen justify-between">
+
+    <!-- Top Header Bar with Logos -->
+    <header class="w-full py-4 px-6 md:px-12 bg-saudi-900/80 border-b border-gold/30 backdrop-blur-md">
+        <div class="ipad-container flex flex-row items-center justify-between">
+            <!-- Ministry of Education Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="bg-white/95 p-1.5 rounded-xl shadow-md border border-gold/30 flex items-center justify-center w-14 h-14">
+                    <!-- شعار وزارة التعليم -->
+                    <img src="https://upload.wikimedia.org/wikipedia5/commons/thumb/c/cf/Logo_of_the_Ministry_of_Education_%28Saudi_Arabia%29.svg/512px-Logo_of_the_Ministry_of_Education_%28Saudi_Arabia%29.svg.png" 
+                         onerror="this.src='https://i.ibb.co/3s6QJv2/education-logo.png'" 
+                         alt="شعار وزارة التعليم" class="w-11 h-11 object-contain">
+                </div>
+                <div class="hidden sm:block text-right">
+                    <p class="text-xs text-gold font-semibold">المملكة العربية السعودية</p>
+                    <p class="text-sm font-bold text-white">وزارة التعليم</p>
+                </div>
+            </div>
+
+            <!-- Central Title -->
+            <div class="text-center px-2">
+                <h1 class="text-lg md:text-2xl font-black text-white tracking-wide drop-shadow-md">
+                    اليوم الوطني السعودي لمدرسة الثانويه الثلاثون
+                </h1>
+                <p class="text-xs md:text-sm text-gold font-medium mt-0.5">ركن طالبات الثانوية الثلاثون الموهوبات 🇸🇦</p>
+            </div>
+
+            <!-- Vision 2030 Logo -->
+            <div class="flex items-center justify-end">
+                <div class="bg-white/95 p-1.5 rounded-xl shadow-md border border-gold/30 flex items-center justify-center w-14 h-14">
+                    <!-- شعار رؤية 2030 -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Saudi_Vision_2030_logo.svg/512px-Saudi_Vision_2030_logo.svg.png" 
+                         alt="شعار رؤية السعودية 2030" class="w-11 h-11 object-contain">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Area -->
+    <main class="flex-grow flex items-center justify-center p-4 md:p-6 my-auto">
+        <div class="ipad-container w-full">
+            
+            <!-- VIEW 1: HOME PAGE -->
+            <section id="home-view" class="view-section text-center py-6">
+                <div class="glass-card rounded-3xl p-8 md:p-12 max-w-4xl mx-auto border-2 border-gold/40 relative overflow-hidden">
+                    <!-- Decorative corner ornaments -->
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-gold/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-saudi-400/20 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div class="inline-block bg-gold/20 text-gold border border-gold/40 px-6 py-2 rounded-full text-sm font-bold mb-6 floating">
+                        ✨ عقلٌ موهوب، لوطنٍ طموح ✨
+                    </div>
+
+                    <h2 class="text-4xl md:text-6xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                        تحدي الوطن <span class="text-gold">🇸🇦</span>
+                    </h2>
+                    <p class="text-base md:text-xl text-saudi-100 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+                        اختبري معلوماتك الوطنية، واكتبي أجمل عبارات الوفاء والفخر لوطننا الغالي في ركن الموهوبات.
+                    </p>
+
+                    <!-- Main Action Buttons (Horizontal layout optimized for iPad landscape) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                        <button onclick="app.startQuiz()" class="group relative bg-gradient-to-r from-saudi-500 to-saudi-700 hover:from-saudi-400 hover:to-saudi-600 text-white font-bold p-6 rounded-2xl shadow-xl border-2 border-gold/50 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3">
+                            <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                                🧠
+                            </div>
+                            <div class="text-center">
+                                <span class="block text-2xl font-black mb-1">الاختبار الوطني</span>
+                                <span class="text-xs text-gold font-medium">اختبري معلوماتك عن وطنك العظيم</span>
+                            </div>
+                        </button>
+
+                        <button onclick="app.showMessagesView()" class="group relative bg-gradient-to-r from-saudi-800 to-saudi-900 hover:from-saudi-700 hover:to-saudi-800 text-white font-bold p-6 rounded-2xl shadow-xl border-2 border-gold/50 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3">
+                            <div class="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                                💚
+                            </div>
+                            <div class="text-center">
+                                <span class="block text-2xl font-black mb-1">كلمات الطالبات</span>
+                                <span class="text-xs text-gold font-medium">مشاهدة رسائل طالبات الثانوية الثلاثون</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="mt-12 text-xs text-saudi-200/80 font-medium flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-tablet-screen-button text-gold"></i>
+                        <span>مخصص للاستخدام المباشر على شاشة الركن (iPad)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 2: QUIZ PAGE -->
+            <section id="quiz-view" class="view-section hidden max-w-3xl mx-auto">
+                <div class="glass-card rounded-3xl p-6 md:p-10 border-2 border-gold/40 relative">
+                    <!-- Progress Bar & Header -->
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                        <button onclick="app.returnToHome()" class="text-saudi-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-right"></i> الرئيسية
+                        </button>
+                        <div class="text-center">
+                            <span id="quiz-progress-text" class="text-gold font-bold text-sm bg-gold/10 px-4 py-1.5 rounded-full border border-gold/30">السؤال 1 من 5</span>
+                        </div>
+                        <div class="w-20"></div> <!-- Spacer for balance -->
+                    </div>
+
+                    <!-- Question Container -->
+                    <div id="question-container" class="mb-8">
+                        <!-- Populated via JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: SUCCESS RESULT PAGE (5/5) -->
+            <section id="success-view" class="view-section hidden max-w-2xl mx-auto text-center">
+                <div class="glass-card rounded-3xl p-8 md:p-12 border-2 border-gold/50 glow-gold">
+                    <div class="w-24 h-24 bg-gold/20 border-2 border-gold rounded-full flex items-center justify-center mx-auto mb-6 text-5xl floating">
+                        🎉
+                    </div>
+                    
+                    <h3 class="text-4xl font-black text-white mb-2">أحسنتِ! 🎉</h3>
+                    <div class="text-3xl font-black text-gold mb-4">5 / 5</div>
+                    <p class="text-xl text-saudi-100 font-bold mb-6">لقد اجتزتِ تحدي الوطن 🇸🇦</p>
+                    
+                    <div class="bg-white/10 border border-gold/30 rounded-2xl p-4 mb-8">
+                        <p class="text-lg font-bold text-gold italic">«عقلٌ موهوب، لوطنٍ طموح.»</p>
+                    </div>
+
+                    <div>
+                        <button onclick="app.goToWriteMessage()" class="w-full bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-saudi-950 font-black text-xl py-4 px-8 rounded-2xl shadow-xl transition transform hover:scale-105 flex items-center justify-center gap-3">
+                            <span>💚 اكتبي كلمتك للوطن</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 4: FAILED RESULT PAGE (< 5/5) -->
+            <section id="fail-view" class="view-section hidden max-w-2xl mx-auto text-center">
+                <div class="glass-card rounded-3xl p-8 md:p-12 border-2 border-gold/40">
+                    <div class="w-24 h-24 bg-white/10 border-2 border-gold/40 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                        ⭐
+                    </div>
+                    
+                    <h3 class="text-3xl font-black text-white mb-2">محاولة رائعة!</h3>
+                    <div id="fail-score-text" class="text-3xl font-black text-gold mb-4">4 / 5</div>
+                    <p class="text-base text-saudi-100 mb-8">جميل جداً تفاعلكِ مع تحدي الوطن، ننتظر منكِ محاولة أخرى أو يمكنك زيارة ركن الكلمات!</p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="app.startQuiz()" class="bg-saudi-500 hover:bg-saudi-400 text-white font-bold py-3.5 px-6 rounded-xl transition border border-gold/30">
+                            🔄 إعادة المحاولة
+                        </button>
+                        <button onclick="app.returnToHome()" class="bg-white/10 hover:bg-white/20 text-white font-bold py-3.5 px-6 rounded-xl transition border border-white/20">
+                            العودة للرئيسية
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 5: STUDENT MESSAGES & WRITING WALL -->
+            <section id="messages-view" class="view-section hidden max-w-6xl mx-auto">
+                <div class="glass-card rounded-3xl p-6 md:p-10 border-2 border-gold/40">
+                    <!-- Header & Navigation -->
+                    <div class="flex flex-col md:flex-row items-center justify-between pb-6 mb-8 border-b border-white/10 gap-4">
+                        <button onclick="app.returnToHome()" class="text-saudi-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-right"></i> الرئيسية
+                        </button>
+                        <div class="text-center">
+                            <h3 class="text-2xl md:text-3xl font-black text-white tracking-wide">
+                                كلمة من طالبات الثانوية الثلاثون إلى الوطن 💚🇸🇦
+                            </h3>
+                            <p class="text-xs md:text-sm text-gold mt-1">مشاهدة حية ومباشرة لرسائل الطالبات في الركن</p>
+                        </div>
+                        <div class="w-24 hidden md:block"></div>
+                    </div>
+
+                    <!-- Writing Box (Only visible if user passed 5/5) -->
+                    <div id="write-box-container" class="hidden mb-10 bg-saudi-900/90 border-2 border-gold rounded-2xl p-6 shadow-2xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-gold font-bold text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-pen-nib"></i> أضيفي رسالتكِ للوطن الغالي:
+                            </h4>
+                            <span id="char-count" class="text-xs text-saudi-200">0 / 180 حرف</span>
+                        </div>
+                        <textarea id="message-input" maxlength="180" rows="3" placeholder="اكتبي كلمتكِ هنا بكل حب واعتزاز لوطننا العظيم..." class="w-full bg-saudi-950/80 border border-gold/40 rounded-xl p-4 text-white placeholder-saudi-300 focus:outline-none focus:border-gold resize-none text-base font-medium"></textarea>
+                        <div class="flex justify-end mt-3">
+                            <button onclick="app.submitMessage()" class="bg-gradient-to-r from-saudi-500 to-saudi-600 hover:from-saudi-400 hover:to-saudi-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg border border-gold/50 transition flex items-center gap-2 text-base">
+                                <span>إرسال 💚</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Messages Bubbles Grid Area -->
+                    <div class="min-h-[350px] bg-saudi-950/40 rounded-2xl p-6 border border-white/10 relative overflow-hidden">
+                        <div id="messages-loading" class="text-center py-16 text-saudi-200">
+                            <i class="fa-solid fa-spinner fa-spin text-3xl text-gold mb-3"></i>
+                            <p class="text-sm">جاري تحميل رسائل الطالبات...</p>
+                        </div>
+
+                        <div id="empty-messages" class="hidden text-center py-20">
+                            <div class="text-5xl mb-3">💌</div>
+                            <h5 class="text-xl font-bold text-white mb-1">لا توجد رسائل مسجلة بعد</h5>
+                            <p class="text-sm text-saudi-200">كوني أول طالبة تبادر وتكتب كلمتها للوطن عبر اجتياز الاختبار!</p>
+                        </div>
+
+                        <!-- Bubbles container -->
+                        <div id="bubbles-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
+                            <!-- Populated via Firebase Realtime listener -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-4 text-center text-xs text-saudi-200 border-t border-gold/20 bg-saudi-900/60 mt-auto">
+        <p>جميع الحقوق محفوظة © ركن طالبات الثانوية الثلاثون الموهوبات 🇸🇦 | اليوم الوطني السعودي</p>
+    </footer>
+
+    <!-- Application Logic Script -->
+    <script>
+        // Database of Questions (Comprehensive Bank - No date questions except National Day)
+        const questionBank = [
+            {
+                q: "ما هو اللون المميز للعلم السعودي وماذا يرمز؟",
+                options: ["الأخضر ويررمز للنماء والرخاء والسلام", "الأزرق ويرمز للبحر الممتد", "الأحمر ويررمز للتاريخ العريق"],
+                answer: 0
+            },
+            {
+                q: "في أي شهر يتم الاحتفال باليوم الوطني للمملكة العربية السعودية كل عام؟",
+                options: ["شهر محرم", "شهر سبتمبر (الميزان)", "شهر رجب"],
+                answer: 1
+            },
+            {
+                q: "ما هي العاصمة الإدارية والتاريخية للمملكة العربية السعودية؟",
+                options: ["مدينة جدة الساحلية", "مدينة الرياض", "مدينة الطائف السياحية"],
+                answer: 1
+            },
+            {
+                q: "أي من المعالم التراثية والتاريخية التالية تقع في محافظة العلا ومسجلة عالمياً في اليونسكو؟",
+                options: ["مدائن صالح (الحجر)", "قلعة قبا التاريخية", "قصر المصمك الملكي"],
+                answer: 0
+            },
+            {
+                q: "ما هي شجرة العَلم الرسمية والمرتبطة بالهوية البيئية للمملكة العربية السعودية؟",
+                options: ["شجرة النخيل المعطاءة", "شجرة السمر البرية", "شجرة الزيتون"],
+                answer: 0
+            },
+            {
+                q: "أي من الفنون الشعبية السعودية التراثية يتم أداؤها بالسيوف والرقصات الإيقاعية؟",
+                options: ["العرضة السعودية", "السامري البحري", "المزمار الحجازي"],
+                answer: 0
+            },
+            {
+                q: "ما هو المشروع الضخم المستقبلي المستدام الذي يعتمد بالكامل على الطاقة النظيفة وتقنيات الذكاء الاصطناعي في شمال غرب المملكة؟",
+                options: ["مشروع نيوم (NEOM)", "مشروع الدرعية التاريخي", "مشروع القدية الترفيهي"],
+                answer: 0
+            },
+            {
+                q: "ما هو البحر الذي يحد المملكة العربية السعودية من جهة الغرب؟",
+                options: ["البحر الأحمر", "الخليج العربي", "بحر العرب"],
+                answer: 0
+            },
+            {
+                q: "ما هي المنطقة التاريخية الشهيرة في مدينة جدة والتي تتميز برواشينها الخشبية التقليدية؟",
+                options: ["البلد (جدة التاريخية)", "حي الطريف بالدرعية", "القرية التراثية بأشیقر"],
+                answer: 0
+            },
+            {
+                q: "ما هي النبتة العطرية الشهيرة التي يرتديها الرجال والشباب كإكليل فوق الرأس في المرتفعات الجنوبية للمملكة (عسير وجازان)؟",
+                options: ["الكادي والريحان والبعيثران", "الورد الطائفي الفاخر", "الياسمين البري"],
+                answer: 0
+            },
+            {
+                q: "ما هو القصر التاريخي العريق في الرياض الذي شهد انطلاق توحيد المملكة العربية السعودية عام 1302هـ؟",
+                options: ["قصر المصمك", "قصر المربع", "قصر شبرا التاريخي"],
+                answer: 0
+            },
+            {
+                q: "أي من الرياضات العالمية الكبرى أصبحت تقام بانتظام في حلبة كورنيش جدة ومسارات الصحراء السعودية؟",
+                options: ["سباقات الفورمولا 1 ورالي داكار", "بطولات التنس الأرضي الدولية", "بطولات الغولف المفتوحة فقط"],
+                answer: 0
+            },
+            {
+                q: "ما هو الاسم التاريخي الذي يطلق على اللباس التقليدي النسائي التراثي المزرزب في المنطقة الوسطى والشرقية؟",
+                options: ["الدراعة والمنتوق والمخنق", "العباءة الملونة الحديثة", "الجبة المطرزة"],
+                answer: 0
+            },
+            {
+                q: "ما هي حة القهوة السعودية الرسمية التي تم إعلان العام المخصص لها لتعزيز التراث والثقافة؟",
+                options: ["عام القهوة السعودية", "عام التراث الوطني", "عام الشعر العربي"],
+                answer: 0
+            },
+            {
+                q: "أي من المدن السعودية الكبرى تُلقب بـ «عروس البحر الأحمر»؟",
+                options: ["مدينة جدة", "مدينة أبها", "مدينة تبوك"],
+                answer: 0
+            },
+            {
+                q: "ما هي المحمية الطبيعية الكبرى في شمال غرب المملكة التي تشتهر بتضاريسها الجبلية ونمورها العربية؟",
+                options: ["محمية الملك سلمان بن عبدالعزيز الملكية", "محمية الإمام تركي بن عبدالله", "محمية أцعوق"],
+                answer: 0
+            },
+            {
+                q: "ما هو الشعار النصي الثابت الذي يرافق الهوية الرسمية للأيام الوطنية السعودية للمملكة؟",
+                options: ["نحلم ونحقق", "صنُع في السعودية", "دار المجد والعز"],
+                answer: 0
+            },
+            {
+                q: "ما هو اسم الوادي الشهير الخصيب الذي يقع في قلب نجد ويمتد لمسافات طويلة وتحيط به المزارع والنخيل؟",
+                options: ["وادي حنيفة", "وادي الدواسر", "وادي لجب"],
+                answer: 0
+            },
+            {
+                q: "أي من المأكولات الشعبية السعودية التقليدية تشتهر بكونها طبق الضيافة الأول المصنوع من البر والقرصان أو اللحم والمرق؟",
+                options: ["الجريش والسليق والمرقوق", "البيتزا الإيطالية", "البرجر السريع"],
+                answer: 0
+            },
+            {
+                q: "ما هو المركز المالي والثقافي العالمي في الرياض الذي يضم متحفاً بتصميم معماري إعجازي ومباني ناطحات سحاب فريدة (مركز الملك عبدالله المالي)?",
+                options: ["كافد (KAFD)", "مركز العباسية", "الواجهة البحرية"],
+                answer: 0
+            }
+        ];
+
+        class NationalDayApp {
+            constructor() {
+                this.currentView = 'home-view';
+                this.currentQuizQuestions = [];
+                this.currentQuestionIndex = 0;
+                this.score = 0;
+                this.userCanWrite = false;
+                
+                // Firebase setup
+                this.db = null;
+                this.initFirebase();
+                this.initCharCounter();
+            }
+
+            async initFirebase() {
+                try {
+                    // Public Demo Firebase configuration for reliable real-time sync across iPad/displays
+                    const firebaseConfig = {
+                        databaseURL: "https://national-day-30th-default-rtdb.firebaseio.com/"
+                    };
+                    const appInstance = window.FB.initializeApp(firebaseConfig);
+                    this.db = window.FB.getDatabase(appInstance);
+                    this.listenToMessages();
+                } catch (e) {
+                    console.log("Firebase fallback initialization active", e);
+                    // Fallback to local array storage if offline/network restriction
+                    this.messages = JSON.parse(localStorage.getItem('saudi_national_messages_30th') || '[]');
+                    this.renderMessagesLocally();
+                }
+            }
+
+            switchView(viewId) {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                document.getElementById(viewId).classList.remove('hidden');
+                this.currentView = viewId;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            returnToHome() {
+                this.switchView('home-view');
+            }
+
+            showMessagesView() {
+                this.switchView('messages-view');
+                const writeBox = document.getElementById('write-box-container');
+                if (this.userCanWrite) {
+                    writeBox.classList.remove('hidden');
+                } else {
+                    writeBox.classList.add('hidden');
+                }
+            }
+
+            startQuiz() {
+                this.score = 0;
+                this.currentQuestionIndex = 0;
+                // Shuffle and pick 5 random questions
+                const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+                this.currentQuizQuestions = shuffled.slice(0, 5);
+                this.switchView('quiz-view');
+                this.renderQuestion();
+            }
+
+            renderQuestion() {
+                if (this.currentQuestionIndex >= 5) {
+                    this.showResult();
+                    return;
+                }
+
+                const qData = this.currentQuizQuestions[this.currentQuestionIndex];
+                document.getElementById('quiz-progress-text').innerText = `السؤال ${this.currentQuestionIndex + 1} من 5`;
+
+                const container = document.getElementById('question-container');
+                
+                let html = `
+                    <div class="mb-8">
+                        <h3 class="text-xl md:text-2xl font-bold text-white mb-6 leading-relaxed">
+                            <span class="text-gold ml-2">${this.currentQuestionIndex + 1}.</span> ${qData.q}
+                        </h3>
+                        <div class="space-y-3">
+                `;
+
+                qData.options.forEach((opt, idx) => {
+                    html += `
+                        <button onclick="app.answerQuestion(${idx})" class="w-full text-right bg-saudi-900/80 hover:bg-saudi-700/80 border border-gold/30 hover:border-gold p-4 rounded-xl text-white font-medium text-lg transition flex items-center justify-between group">
+                            <span>${opt}</span>
+                            <span class="w-8 h-8 rounded-full bg-white/10 group-hover:bg-gold group-hover:text-saudi-950 flex items-center justify-center text-sm font-bold transition text-gold">
+                                ${['أ', 'ب', 'ج'][idx]}
+                            </span>
+                        </button>
+                    `;
+                });
+
+                html += `</div></div>`;
+                container.innerHTML = html;
+            }
+
+            answerQuestion(selectedIdx) {
+                const qData = this.currentQuizQuestions[this.currentQuestionIndex];
+                if (selectedIdx === qData.answer) {
+                    this.score++;
+                }
+                this.currentQuestionIndex++;
+                this.renderQuestion();
+            }
+
+            showResult() {
+                if (this.score === 5) {
+                    this.userCanWrite = true;
+                    this.switchView('success-view');
+                } else {
+                    this.userCanWrite = false;
+                    document.getElementById('fail-score-text').innerText = `${this.score} / 5`;
+                    this.switchView('fail-view');
+                }
+            }
+
+            goToWriteMessage() {
+                this.switchView('messages-view');
+                const writeBox = document.getElementById('write-box-container');
+                writeBox.classList.remove('hidden');
+                document.getElementById('message-input').value = '';
+                document.getElementById('char-count').innerText = '0 / 180 حرف';
+            }
+
+            initCharCounter() {
+                const textarea = document.getElementById('message-input');
+                if (textarea) {
+                    textarea.addEventListener('input', (e) => {
+                        const len = e.target.value.length;
+                        document.getElementById('char-count').innerText = `${len} / 180 حرف`;
+                    });
+                }
+            }
+
+            async submitMessage() {
+                const input = document.getElementById('message-input');
+                const text = input.value.trim();
+
+                if (!text) {
+                    alert('الرجاء كتابة رسالة قبل الإرسال.');
+                    return;
+                }
+
+                if (text.length > 180) {
+                    alert('عذراً، الحد الأقصى للرسالة هو 180 حرفاً.');
+                    return;
+                }
+
+                const messageObj = {
+                    text: text,
+                    timestamp: Date.now()
+                };
+
+                try {
+                    if (this.db) {
+                        const messagesRef = window.FB.ref(this.db, 'national_messages_30th');
+                        await window.FB.push(messagesRef, messageObj);
+                    } else {
+                        // Fallback local storage
+                        this.messages.unshift(messageObj);
+                        localStorage.setItem('saudi_national_messages_30th', JSON.stringify(this.messages));
+                        this.renderMessagesLocally();
+                    }
+
+                    input.value = '';
+                    document.getElementById('char-count').innerText = '0 / 180 حرف';
+                    this.userCanWrite = false; // Lock writing until next 5/5
+                    document.getElementById('write-box-container').classList.add('hidden');
+                    alert('تم إرسال رسالتكِ بنجاح وفوري في ركن الكلمات 💚🇸🇦');
+                } catch (error) {
+                    console.error("Error saving message:", error);
+                    alert('حدث خطأ أثناء الإرسال، يجدر المحاولة مرة أخرى.');
+                }
+            }
+
+            listenToMessages() {
+                if (!this.db) return;
+                const messagesRef = window.FB.ref(this.db, 'national_messages_30th');
+                window.FB.onValue(messagesRef, (snapshot) => {
+                    const data = snapshot.val();
+                    const container = document.getElementById('bubbles-container');
+                    const loading = document.getElementById('messages-loading');
+                    const empty = document.getElementById('empty-messages');
+
+                    loading.classList.add('hidden');
+                    container.innerHTML = '';
+
+                    if (!data) {
+                        empty.classList.remove('hidden');
+                        return;
+                    }
+
+                    empty.classList.add('hidden');
+                    const messagesArray = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
+
+                    messagesArray.forEach((msg, idx) => {
+                        const bubble = document.createElement('div');
+                        // Random rotation angles or offsets for organic chat bubble feeling
+                        const rotations = ['rotate-1', '-rotate-1', 'rotate-0', 'rotate-2', '-rotate-2'];
+                        const rotClass = rotations[idx % rotations.length];
+                        
+                        bubble.className = `glass-bubble p-5 rounded-2xl ${rotClass} flex flex-col justify-between relative shadow-lg`;
+                        bubble.innerHTML = `
+                            <div class="absolute -top-3 right-4 bg-saudi-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-gold/40 shadow">
+                                طالبة موهبة 🇸🇦
+                            </div>
+                            <p class="text-saudi-950 font-bold text-base md:text-lg mt-2 mb-3 leading-relaxed break-words">«${escapeHtml(msg.text)}»</p>
+                            <div class="flex items-center justify-between text-[11px] text-saudi-600 font-medium pt-2 border-t border-saudi-200">
+                                <span>ثانوية الموهوبات الـ 30</span>
+                                <span class="text-gold-dark font-bold">اليوم الوطني 🇸🇦</span>
+                            </div>
+                        `;
+                        container.appendChild(bubble);
+                    });
+                });
+            }
+
+            renderMessagesLocally() {
+                const container = document.getElementById('bubbles-container');
+                const loading = document.getElementById('messages-loading');
+                const empty = document.getElementById('empty-messages');
+
+                loading.classList.add('hidden');
+                container.innerHTML = '';
+
+                if (!this.messages || this.messages.length === 0) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                empty.classList.add('hidden');
+                this.messages.forEach((msg, idx) => {
+                    const bubble = document.createElement('div');
+                    bubble.className = `glass-bubble p-5 rounded-2xl flex flex-col justify-between relative shadow-lg`;
+                    bubble.innerHTML = `
+                        <div class="absolute -top-3 right-4 bg-saudi-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-gold/40 shadow">
+                            طالبة موهبة 🇸🇦
+                        </div>
+                        <p class="text-saudi-950 font-bold text-base md:text-lg mt-2 mb-3 leading-relaxed break-words">«${escapeHtml(msg.text)}»</p>
+                        <div class="flex items-center justify-between text-[11px] text-saudi-600 font-medium pt-2 border-t border-saudi-200">
+                            <span>ثانوية الموهوبات الـ 30</span>
+                            <span class="text-gold-dark font-bold">اليوم الوطني 🇸🇦</span>
+                        </div>
+                    `;
+                    container.appendChild(bubble);
+                });
+            }
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // Initialize application instance
+        const app = new NationalDayApp();
+    </script>
+</body>
+</html>
